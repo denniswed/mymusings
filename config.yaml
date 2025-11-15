@@ -1,0 +1,11 @@
+# Blog Configuration
+blog_title: "My Musings"
+blog_description: "A blog, a diary, a place to puke my thoughts"
+author: "Your Name"
+base_url: "/"
+
+# Optional: Enable comments using Utterances (GitHub-based commenting)
+# To enable, uncomment and set your GitHub repository
+# comments:
+#   enabled: true
+#   repo: "username/repo"
