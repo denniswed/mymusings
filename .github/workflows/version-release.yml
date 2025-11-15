@@ -1,0 +1,135 @@
+name: Version and Release
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'posts/**'
+      - 'static/**'
+
+permissions:
+  contents: write
+
+jobs:
+  version-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get latest tag
+        id: get_latest_tag
+        run: |
+          # Get the latest tag, default to 1.0.0 if no tags exist
+          LATEST_TAG=$(git tag -l "v*" --sort=-v:refname | head -n 1)
+          if [ -z "$LATEST_TAG" ]; then
+            echo "No existing tags found, starting with v1.0.0"
+            echo "tag=v1.0.0" >> $GITHUB_OUTPUT
+            echo "major=1" >> $GITHUB_OUTPUT
+            echo "minor=0" >> $GITHUB_OUTPUT
+            echo "patch=0" >> $GITHUB_OUTPUT
+          else
+            echo "Latest tag: $LATEST_TAG"
+            echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+            # Remove 'v' prefix and split version
+            VERSION=${LATEST_TAG#v}
+            MAJOR=$(echo "$VERSION" | cut -d. -f1)
+            MINOR=$(echo "$VERSION" | cut -d. -f2)
+            PATCH=$(echo "$VERSION" | cut -d. -f3)
+            echo "major=$MAJOR" >> $GITHUB_OUTPUT
+            echo "minor=$MINOR" >> $GITHUB_OUTPUT
+            echo "patch=$PATCH" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Determine version bump
+        id: version_bump
+        run: |
+          # Get the commit messages since the last tag
+          if git rev-parse "${{ steps.get_latest_tag.outputs.tag }}" >/dev/null 2>&1; then
+            COMMITS=$(git log "${{ steps.get_latest_tag.outputs.tag }}"..HEAD --pretty=format:"%s")
+          else
+            COMMITS=$(git log --pretty=format:"%s")
+          fi
+          
+          echo "Analyzing commits:"
+          echo "$COMMITS"
+          
+          MAJOR=${{ steps.get_latest_tag.outputs.major }}
+          MINOR=${{ steps.get_latest_tag.outputs.minor }}
+          PATCH=${{ steps.get_latest_tag.outputs.patch }}
+          
+          # Check for major version bump (PR titles starting with "major")
+          if echo "$COMMITS" | grep -Eiq '(^|\n)major'; then
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+            echo "bump_type=major" >> $GITHUB_OUTPUT
+          # Check for minor version bump (commits starting with "feat")
+          elif echo "$COMMITS" | grep -Eiq '(^|\n)feat'; then
+            MINOR=$((MINOR + 1))
+            PATCH=0
+            echo "bump_type=minor" >> $GITHUB_OUTPUT
+          else
+            # Patch version bump for all other changes
+            PATCH=$((PATCH + 1))
+            echo "bump_type=patch" >> $GITHUB_OUTPUT
+          fi
+          
+          NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "New version: $NEW_VERSION"
+
+      - name: Check if version changed
+        id: check_version
+        run: |
+          if [ "${{ steps.get_latest_tag.outputs.tag }}" == "${{ steps.version_bump.outputs.new_version }}" ]; then
+            echo "Version unchanged, skipping release"
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create and push tag
+        if: steps.check_version.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a ${{ steps.version_bump.outputs.new_version }} -m "Release ${{ steps.version_bump.outputs.new_version }}"
+          git push origin ${{ steps.version_bump.outputs.new_version }}
+
+      - name: Generate release notes
+        if: steps.check_version.outputs.changed == 'true'
+        id: release_notes
+        run: |
+          if git rev-parse "${{ steps.get_latest_tag.outputs.tag }}" >/dev/null 2>&1; then
+            NOTES=$(git log "${{ steps.get_latest_tag.outputs.tag }}"..HEAD --pretty=format:"- %s (%h)" --no-merges)
+          else
+            NOTES=$(git log --pretty=format:"- %s (%h)" --no-merges)
+          fi
+          
+                    # Save to file to handle multiline content
+                    cat << 'EOF' > release_notes.txt
+          ## Changes in ${{ steps.version_bump.outputs.new_version }}
+          
+          **Version Bump Type:** ${{ steps.version_bump.outputs.bump_type }}
+          
+          $NOTES
+          EOF
+                    
+                    echo "Release notes generated"
+
+      - name: Create GitHub Release
+        if: steps.check_version.outputs.changed == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version_bump.outputs.new_version }}
+          name: Release ${{ steps.version_bump.outputs.new_version }}
+          body_path: release_notes.txt
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
