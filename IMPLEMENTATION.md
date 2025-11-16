@@ -64,6 +64,7 @@ A complete, production-ready static blog system that meets all requirements:
 
 1. **Setup** (one-time)
    ```bash
+   source venv/bin/activate
    pip install -r requirements.txt
    # Edit config.yaml with your details
    ```

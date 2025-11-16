@@ -2,11 +2,18 @@
 
 Get your blog up and running in 5 minutes!
 
-## 1. Setup (One-time)
+## 1. Setup
 
 ```bash
+
+# setup environment
+
+source venv/bin/activate
+
 # Install dependencies
 pip install -r requirements.txt
+
+
 
 # Customize your blog
 # Edit config.yaml with your name and blog details

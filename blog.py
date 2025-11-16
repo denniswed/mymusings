@@ -92,6 +92,44 @@ def list_posts():
         print(f"  - {post_path.name}")
 
 
+def kill_process_on_port(port):
+    """Kill any process using the specified port."""
+    import subprocess
+    import signal
+    
+    try:
+        # Find process using the port
+        result = subprocess.run(
+            ['lsof', '-ti', f':{port}'],
+            capture_output=True,
+            text=True
+        )
+        
+        if result.stdout.strip():
+            pids = result.stdout.strip().split('\n')
+            for pid in pids:
+                try:
+                    pid_int = int(pid)
+                    print(f"Found orphaned process (PID {pid_int}) on port {port}. Killing it...")
+                    import os
+                    os.kill(pid_int, signal.SIGKILL)
+                    print(f"✓ Killed process {pid_int}")
+                except (ValueError, ProcessLookupError, PermissionError) as e:
+                    print(f"Warning: Could not kill process {pid}: {e}")
+    except FileNotFoundError:
+        # lsof not available, try alternative method
+        try:
+            result = subprocess.run(
+                ['ss', '-lptn', f'sport = :{port}'],
+                capture_output=True,
+                text=True
+            )
+            # This is a fallback but won't work well for killing processes
+            print(f"Note: lsof not available, cannot automatically kill processes on port {port}")
+        except FileNotFoundError:
+            pass
+
+
 def serve_blog(port=8000):
     """Start a simple HTTP server to preview the blog."""
     import http.server
@@ -102,6 +140,9 @@ def serve_blog(port=8000):
     if not output_dir.exists():
         print("Error: Output directory not found. Run 'python build.py' first.")
         return
+    
+    # Kill any orphaned processes on the port
+    kill_process_on_port(port)
     
     # Change to output directory
     import os
@@ -118,6 +159,11 @@ def serve_blog(port=8000):
             httpd.serve_forever()
     except KeyboardInterrupt:
         print("\n\nServer stopped.")
+    except OSError as e:
+        if "Address already in use" in str(e):
+            print(f"\nError: Port {port} is still in use. Please wait a moment and try again.")
+        else:
+            raise
 
 
 def main():

@@ -8,8 +8,8 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
     line-height: 1.6;
-    color: #333;
-    background-color: #f5f5f5;
+    color: #00ff00;
+    background-color: #000000;
 }
 
 .container {
@@ -20,8 +20,8 @@ body {
 
 /* Header */
 header {
-    background-color: #fff;
-    border-bottom: 1px solid #e0e0e0;
+    background-color: #000000;
+    border-bottom: 1px solid #00ff00;
     padding: 2rem 0;
     margin-bottom: 2rem;
 }
@@ -32,41 +32,60 @@ header h1 {
 }
 
 header h1 a {
-    color: #333;
+    color: #008000;
     text-decoration: none;
 }
 
 header h1 a:hover {
-    color: #007bff;
+    color: #00ff00;
 }
 
 .tagline {
-    color: #666;
+    color: #00ff00;
     font-style: italic;
 }
 
 /* Main Content */
 main {
-    background-color: #fff;
+    background-color: #000000;
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0,255,0,0.3);
     margin-bottom: 2rem;
     min-height: 60vh;
+}
+
+/* Blog Introduction */
+.blog-intro {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #008000;
+}
+
+.blog-intro h2 {
+    color: #008000;
+    margin-bottom: 1rem;
+    font-size: 1.75rem;
+}
+
+.blog-intro p {
+    color: #00ff00;
+    font-size: 1.1rem;
+    line-height: 1.8;
 }
 
 /* Posts List */
 .posts-list h2 {
     margin-bottom: 2rem;
-    color: #333;
-    border-bottom: 2px solid #007bff;
+    color: #008000;
+    border-bottom: 2px solid #008000;
     padding-bottom: 0.5rem;
 }
 
 .post-preview {
     margin-bottom: 2rem;
     padding-bottom: 2rem;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #008000;
 }
 
 .post-preview:last-child {
@@ -78,17 +97,18 @@ main {
 }
 
 .post-preview h3 a {
-    color: #007bff;
+    color: #008000;
     text-decoration: none;
 }
 
 .post-preview h3 a:hover {
     text-decoration: underline;
+    color: #00ff00;
 }
 
 /* Post Meta */
 .post-meta {
-    color: #666;
+    color: #00ff00;
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
 }
@@ -104,8 +124,8 @@ main {
 
 .tag {
     display: inline-block;
-    background-color: #e9ecef;
-    color: #495057;
+    background-color: #008000;
+    color: #000000;
     padding: 0.25rem 0.75rem;
     border-radius: 12px;
     font-size: 0.85rem;
@@ -114,7 +134,7 @@ main {
 
 /* Individual Post */
 .post h2 {
-    color: #333;
+    color: #008000;
     margin-bottom: 1rem;
 }
 
@@ -131,7 +151,7 @@ main {
 .post-content h6 {
     margin-top: 1.5rem;
     margin-bottom: 1rem;
-    color: #333;
+    color: #008000;
 }
 
 .post-content h1 { font-size: 2rem; }
@@ -149,15 +169,16 @@ main {
 }
 
 .post-content code {
-    background-color: #f4f4f4;
+    background-color: #1a1a1a;
     padding: 0.2rem 0.4rem;
     border-radius: 3px;
     font-family: 'Courier New', monospace;
     font-size: 0.9em;
+    color: #00ff00;
 }
 
 .post-content pre {
-    background-color: #f4f4f4;
+    background-color: #1a1a1a;
     padding: 1rem;
     border-radius: 5px;
     overflow-x: auto;
@@ -170,43 +191,45 @@ main {
 }
 
 .post-content blockquote {
-    border-left: 4px solid #007bff;
+    border-left: 4px solid #008000;
     padding-left: 1rem;
     margin-left: 0;
     margin-bottom: 1rem;
-    color: #666;
+    color: #00ff00;
     font-style: italic;
 }
 
 .post-content a {
-    color: #007bff;
+    color: #008000;
     text-decoration: none;
 }
 
 .post-content a:hover {
     text-decoration: underline;
+    color: #00ff00;
 }
 
 .post-footer {
     margin-top: 3rem;
     padding-top: 2rem;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid #008000;
 }
 
 .post-footer a {
-    color: #007bff;
+    color: #008000;
     text-decoration: none;
 }
 
 .post-footer a:hover {
     text-decoration: underline;
+    color: #00ff00;
 }
 
 /* Comments Section */
 .comments {
     margin-top: 3rem;
     padding-top: 2rem;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid #008000;
 }
 
 .comments h3 {
@@ -217,7 +240,7 @@ main {
 footer {
     text-align: center;
     padding: 2rem 0;
-    color: #666;
+    color: #00ff00;
     font-size: 0.9rem;
 }
 
