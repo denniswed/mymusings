@@ -134,11 +134,19 @@ def serve_blog(port=8000):
     """Start a simple HTTP server to preview the blog."""
     import http.server
     import socketserver
+    import subprocess
     
     output_dir = Path(__file__).parent / 'output'
     
+    # Rebuild site for local testing
+    print("Rebuilding site for local testing...")
+    result = subprocess.run([sys.executable, 'build.py', '--local'], cwd=Path(__file__).parent)
+    if result.returncode != 0:
+        print("Error: Build failed.")
+        return
+    
     if not output_dir.exists():
-        print("Error: Output directory not found. Run 'python build.py' first.")
+        print("Error: Output directory not found after build.")
         return
     
     # Kill any orphaned processes on the port

@@ -29,11 +29,15 @@ A complete, production-ready static blog system that meets all requirements:
    - Uses Jinja2 templating
    - Parses frontmatter metadata
    - Generates all pages
+   - Supports `--local` flag for local testing (sets base_url to "/")
+   - Default build uses base_url from config.yaml for deployment
 
 2. **blog.py** - CLI management tool
    - Create new posts with templates
    - List all posts
-   - Local preview server
+   - Local preview server with auto-rebuild
+   - Automatically kills orphaned processes on port 8000
+   - Rebuilds site with `--local` flag when serving
 
 3. **Templates** (Jinja2)
    - base.html - Layout structure
@@ -76,8 +80,12 @@ A complete, production-ready static blog system that meets all requirements:
 
 3. **Build & Preview**
    ```bash
-   python build.py
+   # Local testing (auto-rebuilds with correct paths)
    python blog.py serve
+   
+   # Or manual builds
+   python build.py --local  # For local testing
+   python build.py          # For deployment
    ```
 
 4. **Deploy**
@@ -119,8 +127,11 @@ mymusings/
 - ✅ Tag system
 - ✅ Author metadata
 - ✅ Date sorting
-- ✅ Local preview
-- ✅ Automated deployment
+- ✅ Local preview with auto-rebuild
+- ✅ Automatic orphaned process cleanup
+- ✅ Separate local/deployment builds
+- ✅ Automated deployment via GitHub Actions
+- ✅ Semantic versioning workflow
 - ✅ Optional commenting
 - ✅ Free hosting
 - ✅ No tracking/analytics by default

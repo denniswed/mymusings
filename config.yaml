@@ -2,7 +2,7 @@
 blog_title: "The Musings of an Otudas"
 blog_description: "A blog, a diary, a place to puke my thoughts"
 author: "Otudas/Dennis"
-base_url: "/"
+base_url: "/mymusings/"
 
 # Optional: Enable comments using Utterances (GitHub-based commenting)
 # To enable, uncomment and set your GitHub repository

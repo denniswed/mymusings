@@ -31,15 +31,24 @@ python blog.py new "My First Real Post" --author "Your Name" --tags "personal,th
 ## 3. Build & Preview
 
 ```bash
-# Generate the static site
-python build.py
-
-# Preview locally
+# Preview locally (automatically rebuilds with correct paths)
 python blog.py serve
 # Visit http://localhost:8000
+
+# Or manually build for local testing
+python build.py --local
+
+# Build for deployment to GitHub Pages
+python build.py
 ```
 
 ## 4. Deploy to GitHub Pages (Free!)
+
+### Important: Update config.yaml first!
+
+```yaml
+base_url: "/your-repo-name/"  # e.g., "/mymusings/"
+```
 
 ### Option A: Automatic (Recommended)
 
@@ -55,16 +64,20 @@ python blog.py serve
 ./deploy.sh
 ```
 
+**Note**: Local testing uses `python blog.py serve` which automatically uses `/` as base_url. Deployment uses the `base_url` from config.yaml.
+
 ## 5. Start Writing!
 
 That's it! Your blog is live and free forever.
 
 ### Tips:
 - Posts are in `posts/*.md` format
-- Rebuild after changes: `python build.py`
+- Use `python blog.py serve` for local testing (auto-rebuilds)
+- Use `python build.py` for deployment builds
 - Use Markdown for formatting
 - Add images: `![alt](url)` or host in static/
 - Optional comments: Enable in `config.yaml`
+- Stuck server? `python blog.py serve` automatically kills orphaned processes on port 8000
 
 ### Costs:
 - Hosting: **$0** (GitHub Pages/Netlify/Vercel)

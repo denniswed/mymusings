@@ -5,6 +5,7 @@ Converts Markdown posts to HTML pages.
 """
 
 import os
+import sys
 import shutil
 from pathlib import Path
 from datetime import datetime
@@ -17,7 +18,7 @@ from jinja2 import Environment, FileSystemLoader
 class BlogGenerator:
     """Generates static blog site from Markdown posts."""
     
-    def __init__(self, config_path='config.yaml'):
+    def __init__(self, config_path='config.yaml', local=False):
         """Initialize the blog generator."""
         self.base_dir = Path(__file__).parent
         self.posts_dir = self.base_dir / 'posts'
@@ -28,6 +29,13 @@ class BlogGenerator:
         # Load configuration
         with open(config_path, 'r') as f:
             self.config = yaml.safe_load(f)
+        
+        # Override base_url for local development
+        if local:
+            self.config['base_url'] = '/'
+            print("Building for local development (base_url: /)")
+        else:
+            print(f"Building for deployment (base_url: {self.config['base_url']})")
         
         # Setup Jinja2 environment
         self.jinja_env = Environment(loader=FileSystemLoader(str(self.templates_dir)))
@@ -152,7 +160,10 @@ class BlogGenerator:
 
 def main():
     """Main entry point."""
-    generator = BlogGenerator()
+    # Check for --local flag
+    local = '--local' in sys.argv
+    
+    generator = BlogGenerator(local=local)
     generator.build()
 
 
