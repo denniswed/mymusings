@@ -58,6 +58,10 @@ Write your content here using Markdown...
 Generate the static site:
 
 ```bash
+# For local testing (uses base_url: "/")
+python build.py --local
+
+# For deployment to GitHub Pages (uses base_url: "/mymusings/")
 python build.py
 ```
 
@@ -71,6 +75,11 @@ Start a local server to preview your blog:
 python blog.py serve
 ```
 
+This automatically:
+- Rebuilds the site with `--local` flag for correct paths
+- Kills any orphaned processes on port 8000
+- Starts the server at http://localhost:8000
+
 Open http://localhost:8000 in your browser to see your blog.
 
 ## CLI Commands
@@ -82,7 +91,13 @@ python blog.py new "Post Title" --author "Name" --tags "tag1,tag2"
 # List all posts
 python blog.py list
 
-# Preview blog locally
+# Build for local testing
+python build.py --local
+
+# Build for deployment
+python build.py
+
+# Preview blog locally (auto-rebuilds with --local)
 python blog.py serve --port 8000
 ```
 
@@ -93,10 +108,16 @@ Your blog is just static HTML files, making it **free and easy to deploy**:
 ### GitHub Pages (Recommended - FREE)
 
 1. Create a new repository or use this one
-2. Build your site: `python build.py`
-3. Push the `output/` directory contents to a `gh-pages` branch
-4. Enable GitHub Pages in repository settings
-5. Your blog will be live at `https://username.github.io/repo-name`
+2. Update `config.yaml` with your repository name:
+   ```yaml
+   base_url: "/repo-name/"  # e.g., "/mymusings/"
+   ```
+3. Add the included GitHub Actions workflow (`.github/workflows/deploy.yml`)
+4. Push to main branch - site deploys automatically!
+5. Enable GitHub Pages in repository settings (source: GitHub Actions)
+6. Your blog will be live at `https://username.github.io/repo-name`
+
+**Note**: The `base_url` in `config.yaml` should match your repository name for GitHub Pages. Use `--local` flag when building for local testing.
 
 **Automated Deployment Script:**
 
