@@ -1,8 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="blog-intro">
+    <h2>Otudas and his thoughts</h2>
+    <p>
+Honestly just fucking around. If you find this you are either really lucky, or unlucky, as your search sent you to an obscure place.
+
+It may just end up being a dead end, if so my apologies. If not and it is updated and I contiue to post things, my sincere apologies for subjecting you to my BS.
+
+Welcome.
+    </p>
+</div>
+
 <div class="posts-list">
-    <h2>Recent Posts</h2>
+    <h4>Recent Posts</h4>
     
     {% if posts %}
         {% for post in posts %}
@@ -24,7 +35,7 @@
         </article>
         {% endfor %}
     {% else %}
-        <p>No posts yet. Create your first post in the <code>posts/</code> directory!</p>
+        <p>If you see this I fucked up somewhere...</p>
     {% endif %}
 </div>
 {% endblock %}
