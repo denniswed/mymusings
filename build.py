@@ -55,6 +55,12 @@ class BlogGenerator:
             output_static = self.output_dir / 'static'
             shutil.copytree(self.static_dir, output_static)
             print(f"✓ Copied static files to {output_static}")
+        
+        # Copy CNAME file if it exists (for custom domain)
+        cname_file = self.base_dir / 'CNAME'
+        if cname_file.exists():
+            shutil.copy(cname_file, self.output_dir / 'CNAME')
+            print(f"✓ Copied CNAME file to {self.output_dir}")
     
     def parse_post(self, post_path):
         """Parse a Markdown post with frontmatter."""
