@@ -74,10 +74,19 @@ class BlogGenerator:
         # Get slug from filename
         slug = post_path.stem
         
+        # Normalize date to string format for consistent sorting
+        post_date = post.get('date', datetime.now().strftime('%Y-%m-%d'))
+        if isinstance(post_date, datetime):
+            post_date = post_date.strftime('%Y-%m-%d')
+        elif hasattr(post_date, 'strftime'):  # datetime.date
+            post_date = post_date.strftime('%Y-%m-%d')
+        else:
+            post_date = str(post_date)
+        
         # Parse metadata
         metadata = {
             'title': post.get('title', 'Untitled'),
-            'date': post.get('date', datetime.now().strftime('%Y-%m-%d')),
+            'date': post_date,
             'author': post.get('author', self.config.get('author', 'Unknown')),
             'tags': post.get('tags', []),
             'content': html_content,
