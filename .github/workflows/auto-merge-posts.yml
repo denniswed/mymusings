@@ -1,0 +1,62 @@
+name: Auto-merge Posts to Main
+
+on:
+  push:
+    branches: [ posting ]
+    paths:
+      - 'posts/**'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check-and-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: posting
+          token: ${{ secrets.token }}
+      
+      - name: Check if only posts folder changed
+        id: check_changes
+        run: |
+          # Get list of changed files compared to main
+          git fetch origin main
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+          
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+          
+          # Check if any files outside posts/ were changed
+          NON_POST_CHANGES=$(echo "$CHANGED_FILES" | grep -v '^posts/' || true)
+          
+          if [ -z "$NON_POST_CHANGES" ]; then
+            echo "only_posts=true" >> $GITHUB_OUTPUT
+            echo "✓ Only posts/ folder was modified"
+          else
+            echo "only_posts=false" >> $GITHUB_OUTPUT
+            echo "✗ Changes detected outside posts/ folder:"
+            echo "$NON_POST_CHANGES"
+          fi
+      
+      - name: Merge to main
+        if: steps.check_changes.outputs.only_posts == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Checkout main and merge
+          git checkout main
+          git merge --no-ff posting -m "Auto-merge: New post(s) from posting branch"
+          git push origin main
+      
+      - name: Fail if non-post changes detected
+        if: steps.check_changes.outputs.only_posts == 'false'
+        run: |
+          echo "ERROR: Changes detected outside posts/ folder."
+          echo "Please merge to main manually or move non-post changes to a different branch."
+          exit 1
